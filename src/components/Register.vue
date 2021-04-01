@@ -3,66 +3,70 @@
     <div>
       <h1>新規登録画面</h1>
     </div>
-    <form @submit.prevent="RegisterUser">
-          <div>
-          <label>ユーザ名</label>
-          <input
-            type="text"
-            v-model="Username"
-            placeholder="userName"
-            class="text"
-          />
-          </div>
-          <div>
-          <label>メールアドレス</label>
-          <input
-            type="email"
-            v-model="email"
-            placeholder="E-mail"
-            class="email"
-          />
-          </div>
-          <div>
-          <label>パスワード</label>
-          <input
-            type="text"
-            v-model="password"
-            placeholder="Password"
-            class="password"
-          />
-          </div>
-    <button class="register" type="submit">新規登録</button><br />
+    <form @submit.prevent="registerUser">
+      <div>
+        <label>ユーザ名</label>
+        <input
+          type="text"
+          v-model="userName"
+          placeholder="userName"
+          class="text"
+        />
+      </div>
+      <div>
+        <label>メールアドレス</label>
+        <input
+          type="email"
+          v-model="email"
+          placeholder="E-mail"
+          class="email"
+        />
+      </div>
+      <div>
+        <label>パスワード</label>
+        <input
+          type="text"
+          v-model="password"
+          placeholder="Password"
+          class="password"
+        />
+      </div>
+      <button class="register" type="submit">新規登録</button><br />
     </form>
   </div>
 </template>
 
 <script>
-import firebase from '../plugin/firebase.js';
+import { mapMutations } from 'vuex';
 export default {
-  data() {
-    return {
-      Username: '',
-      email: '',
-      password: '',
-    };
-  },
   methods: {
-    RegisterUser() {
-      firebase.auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then((response) => {
-          response.user.updateProfile({
-            displayName: this.Username,
-          });
-          console.log(response);
-          this.Username = '';
-          this.email = '';
-          this.password = '';
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+    ...mapMutations(['registerUser']),
+  },
+  computed: {
+    email: {
+      get() {
+        return this.$store.getters.email;
+      },
+      set(value) {
+        this.$store.commit('setEmail', value);
+      },
     },
+    userName:{
+      get(){
+        return this.$store.getters.userName;
+      },
+      set(value){
+        this.$store.commit('setUsername',value)
+      }
+    },
+    password:{
+      get(){
+        return this.$store.getters.password
+      },
+      set(value){
+        this.$store.commit('setPassword',value)
+      }
+    }
   },
 };
 </script>
