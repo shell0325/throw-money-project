@@ -1,38 +1,31 @@
 <template>
   <div>
-    <div>
-      <h1>新規登録画面</h1>
-    </div>
-    <form @submit.prevent="registerUser()">
-      <div>
-        <label>ユーザ名</label>
-        <input
-          type="text"
-          v-model="userName"
-          placeholder="userName"
-          class="text"
-        />
-      </div>
+    <form @submit.prevent="signIn()">
       <div>
         <label>メールアドレス</label>
         <input
           type="email"
-          v-model="email"
           placeholder="E-mail"
+          v-model="email"
           class="email"
         />
       </div>
       <div>
         <label>パスワード</label>
         <input
-          type="text"
+          type="password"
           v-model="password"
           placeholder="Password"
           class="password"
         />
       </div>
-      <button class="register" type="submit">新規登録</button><br />
+      <button type="submit" class="signIn">ログイン</button>
     </form>
+    <button>
+      <router-link to="/Register" class="Registration"
+        >新規登録はこちらから</router-link
+      >
+    </button>
   </div>
 </template>
 
@@ -40,7 +33,7 @@
 import { mapActions } from 'vuex';
 export default {
   methods: {
-    ...mapActions(['registerUser']),
+    ...mapActions(['signIn']),
   },
   computed: {
     email: {
@@ -49,14 +42,6 @@ export default {
       },
       set(value) {
         this.$store.commit('setEmail', value);
-      },
-    },
-    userName: {
-      get() {
-        return this.$store.getters.userName;
-      },
-      set(value) {
-        this.$store.commit('setUsername', value);
       },
     },
     password: {
@@ -71,28 +56,26 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .text,
 .email,
 .password {
   border: 1px solid;
 }
-ul li {
-  list-style: none;
+.password {
+  margin-left: 10px;
 }
 .email {
-  margin-right: 47px;
+  margin-right: 20px;
 }
-.password {
-  margin-right: 18px;
-}
-label {
-  text-align: center;
-}
-.register {
+.signIn {
   border: 1px solid;
   background-color: white;
   color: blue;
   outline: none;
+  margin-top: 30px;
+}
+.Registration{
+  color: mediumblue;
 }
 </style>
