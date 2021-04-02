@@ -3,7 +3,7 @@
     <div>
       <h1>新規登録画面</h1>
     </div>
-    <form @submit.prevent="registerUser">
+    <form @submit.prevent="registerUser()">
       <div>
         <label>ユーザ名</label>
         <input
@@ -37,10 +37,10 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   methods: {
-    ...mapMutations(['registerUser']),
+    ...mapActions(['registerUser']),
   },
   computed: {
     email: {

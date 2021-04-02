@@ -10,6 +10,17 @@ export default new Vuex.Store({
     email: '',
     password: '',
   },
+  getters: {
+    email(state) {
+      return state.email;
+    },
+    password(state) {
+      return state.password;
+    },
+    userName(state) {
+      return state.userName;
+    },
+  },
   mutations: {
     registerUser(state) {
       firebase
@@ -28,25 +39,19 @@ export default new Vuex.Store({
           console.log(e);
         });
     },
-    setEmail(state,email) {
-      state.email = email
+    setEmail(state, email) {
+      state.email = email;
     },
     setPassword(state, password) {
-      state.password = password
+      state.password = password;
     },
     setUsername(state, userName) {
-      state.userName = userName
-    }
+      state.userName = userName;
+    },
   },
-  getters: {
-    email(state) {
-      return state.email;
-    },
-    password(state) {
-      return state.password;
-    },
-    userName(state) {
-      return state.userName;
-    },
+  actions: {
+    registerUser(context) {
+      context.commit('registerUser');
+    }
   },
 });
