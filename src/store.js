@@ -23,11 +23,6 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    emptyWord(state) {
-      state.userName = '';
-      state.email = '';
-      state.password = '';
-    },
     setEmail(state, email) {
       state.email = email;
     },
@@ -39,26 +34,33 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    registerUser({ commit, state }) {
+    registerUser({ commit }, userInfo) {
       firebase
         .auth()
-        .createUserWithEmailAndPassword(state.email, state.password)
+        .createUserWithEmailAndPassword(userInfo.email, userInfo.password)
         .then((response) => {
           response.user.updateProfile({
-            displayName: state.userName,
+            displayName: userInfo.userName,
           });
-          console.log(response), commit('emptyWord', state);
+          console.log(response);
+          const user = firebase.auth().currentUser;
+          commit('setEmail', user.email);
+          commit('setPassword', user.password);
+          commit('setUsername', user.userName);
+          router.push('/Home');
         })
         .catch((e) => {
           console.log(e);
         });
     },
-    signIn({ state, commit }) {
+    logIn({ commit }, userInfo) {
       firebase
         .auth()
-        .signInWithEmailAndPassword(state.email, state.password)
+        .signInWithEmailAndPassword(userInfo.email, userInfo.password)
         .then((response) => {
-          commit('emptyWord', state);
+          const user = firebase.auth().currentUser;
+          commit('setEmail', user.email);
+          commit('setPassword', user.password);
           console.log(response);
           router.push('/Home');
         })

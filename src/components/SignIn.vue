@@ -6,7 +6,7 @@
         <input
           type="email"
           placeholder="E-mail"
-          v-model="email"
+          v-model="userInfo.email"
           class="email"
         />
       </div>
@@ -14,7 +14,7 @@
         <label>パスワード</label>
         <input
           type="password"
-          v-model="password"
+          v-model="userInfo.password"
           placeholder="Password"
           class="password"
         />
@@ -30,27 +30,18 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 export default {
-  methods: {
-    ...mapActions(['signIn']),
+  data() {
+    return {
+      userInfo: {
+        email: '',
+        password: '',
+      },
+    };
   },
-  computed: {
-    email: {
-      get() {
-        return this.$store.getters.email;
-      },
-      set(value) {
-        this.$store.commit('setEmail', value);
-      },
-    },
-    password: {
-      get() {
-        return this.$store.getters.password;
-      },
-      set(value) {
-        this.$store.commit('setPassword', value);
-      },
+  methods: {
+    signIn() {
+      this.$store.dispatch('logIn', this.userInfo);
     },
   },
 };
@@ -75,7 +66,7 @@ export default {
   outline: none;
   margin-top: 30px;
 }
-.Registration{
+.Registration {
   color: mediumblue;
 }
 </style>
