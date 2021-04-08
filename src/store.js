@@ -34,24 +34,21 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    registerUser({ commit }, userInfo) {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(userInfo.email, userInfo.password)
-        .then((response) => {
-          response.user.updateProfile({
-            displayName: userInfo.userName,
-          });
-          console.log(response);
-          const user = firebase.auth().currentUser;
-          commit('setEmail', user.email);
-          commit('setPassword', user.password);
-          commit('setUsername', user.userName);
-          router.push('/Home');
-        })
-        .catch((e) => {
-          console.log(e);
+    async registerUser({ commit }, userInfo) {
+      try {
+        const response = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(userInfo.email, userInfo.password);
+        await response.user.updateProfile({
+          displayName: userInfo.userName,
         });
+        const user = await firebase.auth().currentUser;
+        commit('setEmail', user.email);
+        commit('setPassword', user.password);
+        router.push('/Home');
+      } catch (e) {
+        console.log(e);
+      }
     },
     logIn({ commit }, userInfo) {
       firebase
@@ -61,6 +58,7 @@ export default new Vuex.Store({
           const user = firebase.auth().currentUser;
           commit('setEmail', user.email);
           commit('setPassword', user.password);
+          commit('setUsername', user.userName);
           console.log(response);
           router.push('/Home');
         })
