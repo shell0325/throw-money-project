@@ -10,6 +10,7 @@ export default new Vuex.Store({
     userName: '',
     email: '',
     password: '',
+    wallet: 1000,
   },
   getters: {
     email(state) {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
     },
     userName(state) {
       return state.userName;
+    },
+    wallet(state) {
+      return state.wallet;
     },
   },
   mutations: {
@@ -65,6 +69,15 @@ export default new Vuex.Store({
         .catch((e) => {
           console.log(e);
         });
+    },
+    updateUser({ commit }) {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          commit('setUsername', user.displayName);
+        } else if (!user) {
+          console.log('error');
+        }
+      });
     },
   },
 });

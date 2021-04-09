@@ -10,20 +10,22 @@
 </template>
 
 <script>
-import firebase from '../plugin/firebase.js';
 export default {
-  data() {
-    return {
-      userName: '',
-      wallet: 1000,
-    };
+  computed: {
+    userName() {
+      return this.$store.getters.userName;
+    },
+    wallet() {
+      return this.$store.getters.wallet;
+    },
   },
-  created() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.userName = user.displayName;
-      }
-    });
+  methods: {
+    updateUser() {
+      this.$store.dispatch('updateUser');
+    },
+  },
+  created: function() {
+    this.updateUser(this.userName);
   },
 };
 </script>
