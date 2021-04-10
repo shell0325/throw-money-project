@@ -26,6 +26,17 @@ export default new Vuex.Store({
       return state.wallet;
     },
   },
+  getters: {
+    email(state) {
+      return state.email;
+    },
+    password(state) {
+      return state.password;
+    },
+    userName(state) {
+      return state.userName;
+    },
+  },
   mutations: {
     setEmail(state, email) {
       state.email = email;
@@ -70,18 +81,12 @@ export default new Vuex.Store({
           console.log(e);
         });
     },
-    updateUser({ commit }) {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-          console.log('error');
-        } else {
-          commit('setUsername', user.displayName);
-        }
-      });
+
     },
-    signOut() {
-      firebase.auth().signOut();
-      router.push('/');
-    },
+  },
+  actions: {
+    registerUser(context) {
+      context.commit('registerUser');
+    }
   },
 });
