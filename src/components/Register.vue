@@ -3,7 +3,7 @@
     <div>
       <h1>新規登録画面</h1>
     </div>
-    <form @submit.prevent="signUp()">
+
       <div>
         <label>ユーザ名</label>
         <input
@@ -37,13 +37,7 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      userInfo: {
-        email: '',
-        password: '',
-        userName: '',
+
       },
     };
   },
