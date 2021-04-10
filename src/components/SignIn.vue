@@ -1,76 +1,72 @@
 <template>
   <div>
-    <div>
-      <h1>新規登録画面</h1>
-    </div>
-
-      <div>
-        <label>ユーザ名</label>
-        <input
-          type="text"
-          v-model="userInfo.userName"
-          placeholder="userName"
-          class="text"
-        />
-      </div>
+    <form @submit.prevent="signIn()">
       <div>
         <label>メールアドレス</label>
         <input
           type="email"
-          v-model="userInfo.email"
           placeholder="E-mail"
+          v-model="userInfo.email"
           class="email"
         />
       </div>
       <div>
         <label>パスワード</label>
         <input
-          type="text"
+          type="password"
           v-model="userInfo.password"
           placeholder="Password"
           class="password"
         />
       </div>
-      <button class="register" type="submit">新規登録</button><br />
+      <button type="submit" class="signIn">ログイン</button>
     </form>
+    <button>
+      <router-link to="/Register" class="Registration"
+        >新規登録はこちらから</router-link
+      >
+    </button>
   </div>
 </template>
 
 <script>
-
+export default {
+  data() {
+    return {
+      userInfo: {
+        email: '',
+        password: '',
       },
     };
   },
   methods: {
-    signUp() {
-      this.$store.dispatch('registerUser', this.userInfo);
+    signIn() {
+      this.$store.dispatch('logIn', this.userInfo);
     },
   },
 };
 </script>
 
-<style scoped>
+<style>
 .text,
 .email,
 .password {
   border: 1px solid;
 }
-ul li {
-  list-style: none;
+.password {
+  margin-left: 10px;
 }
 .email {
-  margin-right: 47px;
+  margin-right: 20px;
 }
-.password {
-  margin-right: 18px;
-}
-label {
-  text-align: center;
-}
-.register {
+.signIn {
   border: 1px solid;
   background-color: white;
   color: blue;
   outline: none;
+  margin-top: 30px;
+}
+.Registration {
+  color: mediumblue;
 }
 </style>
