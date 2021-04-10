@@ -2,9 +2,16 @@
   <div class="Home">
     <div class="userlist">
       <p>{{ userName }}さんようこそ!!</p>
-      <p>残高{{ wallet }}</p>
-    </div>
-    <h1>ユーザ一覧</h1>
+      <div class="button">
+        <p>残高{{ wallet }}</p>
+        <input
+          type="button"
+          value="ログアウト"
+          @click="signOut()"
+          class="logout"
+        />
+      </div>
+    </div>    <h1>ユーザ一覧</h1>
     <p>ユーザ名</p>
   </div>
 </template>
@@ -23,6 +30,9 @@ export default {
     updateUser() {
       this.$store.dispatch('updateUser');
     },
+    signOut(){
+      this.$store.dispatch('signOut')
+    }
   },
   created: function() {
     this.updateUser(this.userName);
@@ -39,4 +49,14 @@ export default {
   align-items: center;
   justify-content: space-around;
 }
+.button {
+  display: flex;
+}
+.logout {
+  margin-top: 20px;
+  outline: none;
+  background-color: white;
+  height: 20px;
+}
+
 </style>

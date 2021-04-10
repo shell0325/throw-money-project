@@ -72,12 +72,16 @@ export default new Vuex.Store({
     },
     updateUser({ commit }) {
       firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          commit('setUsername', user.displayName);
-        } else if (!user) {
+        if (!user) {
           console.log('error');
+        } else {
+          commit('setUsername', user.displayName);
         }
       });
+    },
+    signOut() {
+      firebase.auth().signOut();
+      router.push('/');
     },
   },
 });
