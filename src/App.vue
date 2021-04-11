@@ -1,10 +1,18 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
-    <router-view></router-view>
+    <Register></Register>
   </div>
 </template>
 
+<script>
+import Register from './components/Register.vue'
+export default {
+  components:{
+    Register
+  }
+}
+</script>
 
 <style>
 #app {

@@ -3,12 +3,12 @@
     <div>
       <h1>新規登録画面</h1>
     </div>
-
+    <form @submit.prevent="registerUser()">
       <div>
         <label>ユーザ名</label>
         <input
           type="text"
-          v-model="userInfo.userName"
+          v-model="userName"
           placeholder="userName"
           class="text"
         />
@@ -17,7 +17,7 @@
         <label>メールアドレス</label>
         <input
           type="email"
-          v-model="userInfo.email"
+          v-model="email"
           placeholder="E-mail"
           class="email"
         />
@@ -26,7 +26,7 @@
         <label>パスワード</label>
         <input
           type="text"
-          v-model="userInfo.password"
+          v-model="password"
           placeholder="Password"
           class="password"
         />
@@ -37,14 +37,36 @@
 </template>
 
 <script>
-
-      },
-    };
-  },
+import { mapActions } from 'vuex';
+export default {
   methods: {
-    signUp() {
-      this.$store.dispatch('registerUser', this.userInfo);
+    ...mapActions(['registerUser']),
+  },
+  computed: {
+    email: {
+      get() {
+        return this.$store.getters.email;
+      },
+      set(value) {
+        this.$store.commit('setEmail', value);
+      },
     },
+    userName:{
+      get(){
+        return this.$store.getters.userName;
+      },
+      set(value){
+        this.$store.commit('setUsername',value)
+      }
+    },
+    password:{
+      get(){
+        return this.$store.getters.password
+      },
+      set(value){
+        this.$store.commit('setPassword',value)
+      }
+    }
   },
 };
 </script>
