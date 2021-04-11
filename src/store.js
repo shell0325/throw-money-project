@@ -79,9 +79,5 @@ export default new Vuex.Store({
         }
       });
     },
-    signOut() {
-      firebase.auth().signOut();
-      router.push('/');
-    },
   },
 });
