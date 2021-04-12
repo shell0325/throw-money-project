@@ -5,13 +5,13 @@ import router from './router.js';
 
 Vue.use(Vuex);
 
-
 export default new Vuex.Store({
   state: {
     userName: '',
     email: '',
     password: '',
     wallet: 1000,
+    isLogin: false,
   },
   getters: {
     email(state) {
@@ -37,6 +37,12 @@ export default new Vuex.Store({
     setUsername(state, userName) {
       state.userName = userName;
     },
+    logout(state) {
+      state.isLogin = false;
+    },
+    login(state) {
+      state.isLogin = true;
+    },
   },
   actions: {
     async registerUser({ commit }, userInfo) {
@@ -50,6 +56,7 @@ export default new Vuex.Store({
         const user = await firebase.auth().currentUser;
         commit('setEmail', user.email);
         commit('setPassword', user.password);
+        commit('login');
         router.push('/Home');
       } catch (e) {
         console.log(e);
@@ -64,6 +71,7 @@ export default new Vuex.Store({
           commit('setEmail', user.email);
           commit('setPassword', user.password);
           commit('setUsername', user.userName);
+          commit('login');
           console.log(response);
           router.push('/Home');
         })
@@ -71,17 +79,19 @@ export default new Vuex.Store({
           console.log(e);
         });
     },
-    updateUser({ commit }) {
+    updateUser({ commit, state }) {
       firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
           console.log('error');
         } else {
           commit('setUsername', user.displayName);
+          console.log(state.isLogin);
         }
       });
     },
-    signOut() {
+    signOut({ commit }) {
       firebase.auth().signOut();
+      commit('logout');
       router.push('/');
     },
   },
