@@ -5,7 +5,8 @@
       <div class="button">
         <p>残高{{ wallet }}</p>
       </div>
-    </div>    <h1>ユーザ一覧</h1>
+    </div>
+    <h1>ユーザ一覧</h1>
     <p>ユーザ名</p>
   </div>
 </template>
@@ -23,6 +24,9 @@ export default {
   methods: {
     updateUser() {
       this.$store.dispatch('updateUser');
+    },
+    signOut() {
+      this.$store.dispatch('signOut');
     },
   },
   created: function() {
@@ -49,5 +53,4 @@ export default {
   background-color: white;
   height: 20px;
 }
-
 </style>
