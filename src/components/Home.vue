@@ -4,12 +4,6 @@
       <p>{{ userName }}さんようこそ!!</p>
       <div class="button">
         <p>残高{{ wallet }}</p>
-        <input
-          type="button"
-          value="ログアウト"
-          @click="signOut()"
-          class="logout"
-        />
       </div>
     </div>
     <h1>ユーザ一覧</h1>
