@@ -11,7 +11,8 @@
           class="logout"
         />
       </div>
-    </div>    <h1>ユーザ一覧</h1>
+    </div>
+    <h1>ユーザ一覧</h1>
     <p>ユーザ名</p>
   </div>
 </template>
@@ -30,9 +31,9 @@ export default {
     updateUser() {
       this.$store.dispatch('updateUser');
     },
-    signOut(){
-      this.$store.dispatch('signOut')
-    }
+    signOut() {
+      this.$store.dispatch('signOut');
+    },
   },
   created: function() {
     this.updateUser(this.userName);
@@ -58,5 +59,4 @@ export default {
   background-color: white;
   height: 20px;
 }
-
 </style>

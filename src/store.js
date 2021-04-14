@@ -79,13 +79,12 @@ export default new Vuex.Store({
           console.log(e);
         });
     },
-    updateUser({ commit, state }) {
+    updateUser({ commit }) {
       firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
           console.log('error');
         } else {
           commit('setUsername', user.displayName);
-          console.log(state.isLogin);
         }
       });
     },
