@@ -4,21 +4,58 @@
       <p>{{ userName }}さんようこそ!!</p>
       <div class="button">
         <p>残高{{ wallet }}</p>
+        <input
+          type="button"
+          value="ログアウト"
+          @click="signOut()"
+          class="logout"
+        />
       </div>
     </div>
     <h1>ユーザ一覧</h1>
-    <p>ユーザ名</p>
+    <div>
+      <p>ユーザ名</p>
+      <table class="usernamelist">
+        <tr v-for="(newUser, index) in newUsers" :key="index" class="usertr">
+          <td class="tableuser">{{ newUser.userName }}</td>
+          <div>
+            <td>
+              <button class="walletButton" @click="() => openModal(index)">
+                walletを見る
+              </button>
+            </td>
+            <td>
+              <button class="walletButton">送る</button>
+            </td>
+          </div>
+        </tr>
+      </table>
+    </div>
+    <modal></modal>
   </div>
 </template>
 
 <script>
+import Modal from './Modal.vue';
 export default {
+  data() {
+    return {
+      showContent: false,
+      index: 0,
+    };
+  },
+  components: {
+    Modal,
+  },
   computed: {
     userName() {
       return this.$store.getters.userName;
     },
     wallet() {
       return this.$store.getters.wallet;
+    },
+    newUsers() {
+      return this.$store.getters.newUser;
     },
   },
   methods: {
@@ -28,9 +65,20 @@ export default {
     signOut() {
       this.$store.dispatch('signOut');
     },
+    openModal(index) {
+      this.$store.dispatch('openModal', index);
+      this.index = index;
+    },
+    getCollections() {
+      this.$store.dispatch('getCollections');
+    },
+    userUpdate() {
+      this.$store.dispatch('userUpdate');
+    },
   },
-  created: function() {
-    this.updateUser(this.userName);
+  created: async function() {
+    await this.getCollections();
+    await this.updateUser(this.userName);
   },
 };
 </script>
@@ -52,5 +100,21 @@ export default {
   outline: none;
   background-color: white;
   height: 20px;
+}
+.username {
+  text-align: left;
+  margin-left: 150px;
+}
+.usernamelist {
+  text-align: left;
+  margin-left: 160px;
+}
+.walletButton {
+  color: white;
+  background-color: blue;
+  outline: none;
+}
+.tableuser {
+  width: 200px;
 }
 </style>
