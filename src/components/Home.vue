@@ -15,17 +15,17 @@
     <h1>ユーザ一覧</h1>
     <div>
       <p>ユーザ名</p>
-      <table class="usernamelist">
-        <tr v-for="(newUser, index) in newUsers" :key="index" class="usertr">
-          <td class="tableuser">{{ newUser.userName }}</td>
+      <table class="username-list">
+        <tr v-for="(newUser, index) in otherUsers" :key="index" class="usertr">
+          <td class="table-user">{{ newUser.userName }}</td>
           <div>
             <td>
-              <button class="walletButton" @click="() => openModal(index)">
+              <button class="wallet-button" @click="openModal(index)">
                 walletを見る
               </button>
             </td>
             <td>
-              <button class="walletButton">送る</button>
+              <button class="wallet-button">送る</button>
             </td>
           </div>
         </tr>
@@ -54,7 +54,7 @@ export default {
     wallet() {
       return this.$store.getters.wallet;
     },
-    newUsers() {
+    otherUsers() {
       return this.$store.getters.newUser;
     },
   },
@@ -105,16 +105,16 @@ export default {
   text-align: left;
   margin-left: 150px;
 }
-.usernamelist {
+.username-list {
   text-align: left;
   margin-left: 160px;
 }
-.walletButton {
+.wallet-button {
   color: white;
   background-color: blue;
   outline: none;
 }
-.tableuser {
+.table-user {
   width: 200px;
 }
 </style>

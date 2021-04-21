@@ -14,7 +14,7 @@ export default new Vuex.Store({
     users: [],
     showContent: false,
     index: 0,
-    newUsers: [],
+    otherUsers: [],
   },
   getters: {
     email(state) {
@@ -39,7 +39,7 @@ export default new Vuex.Store({
       return state.index;
     },
     newUser(state) {
-      return state.newUsers;
+      return state.otherUsers;
     },
   },
   mutations: {
@@ -63,8 +63,11 @@ export default new Vuex.Store({
       state.index = index;
     },
     setFilter(state, newUser) {
-      state.newUsers = newUser;
+      state.otherUsers = newUser;
     },
+    clearUsers(state) {
+      state.users = [];
+    }
   },
   actions: {
     async registerUser({ commit }, userInfo) {
@@ -121,19 +124,19 @@ export default new Vuex.Store({
     },
     /* eslint-enable */
     async getCollections({ commit, state }) {
-      state.users = [];
+      commit('clearUsers');
       try {
         const snapShot = await db.collection('user').get();
         await snapShot.forEach((doc) => {
           state.users.push({
             userName: doc.data().userName,
             wallet: doc.data().wallet,
-            Email: doc.data().email,
+            email: doc.data().email,
           });
         });
         const user = await firebase.auth().currentUser;
         const filterEmail = state.users.filter((users) => {
-          return users.Email !== user.email;
+          return users.email !== user.email;
         });
         commit('setFilter', filterEmail);
       } catch (e) {
