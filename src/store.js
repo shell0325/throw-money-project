@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import firebase from './plugin/firebase.js';
+import firebase, { db } from './plugin/firebase.js';
 import router from './router.js';
 
 Vue.use(Vuex);
@@ -11,7 +11,10 @@ export default new Vuex.Store({
     email: '',
     password: '',
     wallet: 1000,
-    isLogin: false,
+    users: [],
+    showContent: false,
+    index: 0,
+    otherUsers: [],
   },
   getters: {
     email(state) {
@@ -26,6 +29,18 @@ export default new Vuex.Store({
     wallet(state) {
       return state.wallet;
     },
+    users(state) {
+      return state.users;
+    },
+    showContent(state) {
+      return state.showContent;
+    },
+    index(state) {
+      return state.index;
+    },
+    newUser(state) {
+      return state.otherUsers;
+    },
   },
   mutations: {
     setEmail(state, email) {
@@ -37,12 +52,22 @@ export default new Vuex.Store({
     setUsername(state, userName) {
       state.userName = userName;
     },
-    logout(state) {
-      state.isLogin = false;
+    openModal(state, index) {
+      state.showContent = true;
+      state.index = index;
     },
-    login(state) {
-      state.isLogin = true;
+    closeModal(state) {
+      state.showContent = false;
     },
+    setIndex(state, index) {
+      state.index = index;
+    },
+    setFilter(state, newUser) {
+      state.otherUsers = newUser;
+    },
+    clearUsers(state) {
+      state.users = [];
+    }
   },
   actions: {
     async registerUser({ commit }, userInfo) {
@@ -56,7 +81,6 @@ export default new Vuex.Store({
         const user = await firebase.auth().currentUser;
         commit('setEmail', user.email);
         commit('setPassword', user.password);
-        commit('login');
         router.push('/Home');
       } catch (e) {
         console.log(e);
@@ -71,7 +95,6 @@ export default new Vuex.Store({
           commit('setEmail', user.email);
           commit('setPassword', user.password);
           commit('setUsername', user.userName);
-          commit('login');
           console.log(response);
           router.push('/Home');
         })
@@ -88,10 +111,44 @@ export default new Vuex.Store({
         }
       });
     },
-    signOut({ commit }) {
+    signOut() {
       firebase.auth().signOut();
-      commit('logout');
-      router.push('/');
+    },
+    /* eslint-disable */
+    async dbCollection({ commit }, userInfo) {
+      await db.collection('user').add({
+        userName: userInfo.userName,
+        wallet: 1000,
+        email: userInfo.email,
+      });
+    },
+    /* eslint-enable */
+    async getCollections({ commit, state }) {
+      commit('clearUsers');
+      try {
+        const snapShot = await db.collection('user').get();
+        await snapShot.forEach((doc) => {
+          state.users.push({
+            userName: doc.data().userName,
+            wallet: doc.data().wallet,
+            email: doc.data().email,
+          });
+        });
+        const user = await firebase.auth().currentUser;
+        const filterEmail = state.users.filter((users) => {
+          return users.email !== user.email;
+        });
+        commit('setFilter', filterEmail);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    openModal({ commit }, index) {
+      commit('openModal', index);
+      commit('setIndex', index);
+    },
+    closeModal({ commit }) {
+      commit('closeModal');
     },
   },
 });
