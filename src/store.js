@@ -11,10 +11,13 @@ export default new Vuex.Store({
     email: '',
     password: '',
     wallet: 1000,
-    users: [],
     showContent: false,
     index: 0,
-    otherUsers: [],
+    showSendContent: false,
+    loginUser: [],
+    allUser: [],
+    otherLoginUser: [],
+    sendWallet: 0,
   },
   getters: {
     email(state) {
@@ -29,17 +32,23 @@ export default new Vuex.Store({
     wallet(state) {
       return state.wallet;
     },
-    users(state) {
-      return state.users;
-    },
     showContent(state) {
       return state.showContent;
+    },
+    showSendContent(state) {
+      return state.showSendContent;
     },
     index(state) {
       return state.index;
     },
-    newUser(state) {
-      return state.otherUsers;
+    otherLoginUser(state) {
+      return state.otherLoginUser;
+    },
+    loginUser(state) {
+      return state.loginUser;
+    },
+    sendWallet(state) {
+      return state.sendWallet;
     },
   },
   mutations: {
@@ -52,22 +61,33 @@ export default new Vuex.Store({
     setUsername(state, userName) {
       state.userName = userName;
     },
-    openModal(state, index) {
+    openModal(state) {
       state.showContent = true;
-      state.index = index;
     },
     closeModal(state) {
       state.showContent = false;
     },
+    openSendModal(state) {
+      state.showSendContent = true;
+    },
+    closeSendModal(state) {
+      state.showSendContent = false;
+    },
     setIndex(state, index) {
       state.index = index;
     },
-    setFilter(state, newUser) {
-      state.otherUsers = newUser;
+    loginUser(state, loginUser) {
+      state.loginUser = loginUser;
     },
-    clearUsers(state) {
-      state.users = [];
-    }
+    allUser(state, allUser) {
+      state.allUser = allUser;
+    },
+    otherLoginUser(state, otherLoginUser) {
+      state.otherLoginUser = otherLoginUser;
+    },
+    resetUser(state) {
+      state.allUser = [];
+    },
   },
   actions: {
     async registerUser({ commit }, userInfo) {
@@ -102,7 +122,7 @@ export default new Vuex.Store({
           console.log(e);
         });
     },
-    updateUser({ commit }) {
+    updateUsername({ commit }) {
       firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
           console.log('error');
@@ -111,44 +131,105 @@ export default new Vuex.Store({
         }
       });
     },
-    signOut() {
+    signOut({ commit }) {
       firebase.auth().signOut();
+      commit('resetUser');
     },
     /* eslint-disable */
-    async dbCollection({ commit }, userInfo) {
+    async dbRegistration({ commit }, userInfo) {
       await db.collection('user').add({
         userName: userInfo.userName,
         wallet: 1000,
         email: userInfo.email,
+        login: 'login',
       });
     },
     /* eslint-enable */
     async getCollections({ commit, state }) {
-      commit('clearUsers');
+      commit('resetUser');
       try {
         const snapShot = await db.collection('user').get();
         await snapShot.forEach((doc) => {
-          state.users.push({
+          state.allUser.push({
             userName: doc.data().userName,
             wallet: doc.data().wallet,
             email: doc.data().email,
+            id: doc.id,
           });
         });
-        const user = await firebase.auth().currentUser;
-        const filterEmail = state.users.filter((users) => {
-          return users.email !== user.email;
-        });
-        commit('setFilter', filterEmail);
       } catch (e) {
         console.log(e);
       }
     },
     openModal({ commit }, index) {
-      commit('openModal', index);
+      commit('openModal');
       commit('setIndex', index);
     },
     closeModal({ commit }) {
       commit('closeModal');
+    },
+    openSendModal({ commit }, index) {
+      commit('openSendModal');
+      commit('setIndex', index);
+    },
+    closeSendModal({ commit }) {
+      commit('closeSendModal');
+    },
+    async getWallet({ commit, state }, sendWallet) {
+      const postRef = await db
+        .collection('user')
+        .doc(state.otherLoginUser[state.index].id);
+      const postDoc = await postRef.get();
+      const getLogins = await db.collection('user').doc(state.loginUser[0].id);
+      const getLogin = await getLogins.get();
+      if (getLogin.data().wallet > 0) {
+        await postRef.update({
+          wallet: postDoc.data().wallet + Number(sendWallet),
+        });
+        commit('resetUser');
+      }
+    },
+    async sendWallet({ commit, state }, sendWallet) {
+      const postRef = await db.collection('user').doc(state.loginUser[0].id);
+      const postDoc = await postRef.get();
+      if (postDoc.data().wallet > 0) {
+        await postRef.update({
+          wallet: postDoc.data().wallet - sendWallet,
+        });
+        commit('resetUser');
+      } else if (postDoc.data().wallet <= 0) {
+        alert('残高がありません');
+      }
+    },
+    async dataUpdate({ commit, state }) {
+      await db
+        .collection('user')
+        .where('login', '==', 'login')
+        .onSnapshot((doc) => {
+          commit('resetUser');
+          doc.forEach((doc) => {
+            state.allUser.push({
+              userName: doc.data().userName,
+              wallet: doc.data().wallet,
+              email: doc.data().email,
+              id: doc.id,
+            });
+          });
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              const filterLoginUser = state.allUser.filter((allUser) => {
+                return user.email === allUser.email;
+              });
+              const filterOtherLoginUser = state.allUser.filter(
+                (otherLoginUser) => {
+                  return user.email !== otherLoginUser.email;
+                }
+              );
+              commit('loginUser', filterLoginUser);
+              commit('otherLoginUser', filterOtherLoginUser);
+            }
+          });
+        });
     },
   },
 });
