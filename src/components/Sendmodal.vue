@@ -5,9 +5,9 @@
         あなたの残高:{{ loginUser[0].wallet }}
       </p>
       <p>送る金額</p>
-      <input type="number" v-model="sendWallet" class="sendWallet" />
-      <button @click="getWallet(), sendWallets()">送信</button>
-      <p><button class="close" @click="closeSendModal">close</button></p>
+      <input type="number" v-model="sendWallet" class="send-wallet" />
+      <button @click="updateWallet()">送信</button>
+      <p><button class="close-button" @click="closeSendModal">close</button></p>
     </div>
   </div>
 </template>
@@ -34,11 +34,8 @@ export default {
     closeSendModal() {
       this.$store.dispatch('closeSendModal');
     },
-    getWallet() {
-      this.$store.dispatch('getWallet', this.sendWallet);
-    },
-    sendWallets() {
-      this.$store.dispatch('sendWallet', this.sendWallet);
+    updateWallet() {
+      this.$store.dispatch('updateWallet', this.sendWallet);
       this.sendWallet = '';
     },
   },
@@ -67,11 +64,11 @@ export default {
   background: #fff;
   position: relative;
 }
-.close {
+.close-button {
   right: 5px;
   top: 5px;
 }
-.sendWallet {
+.send-wallet {
   border: 1px black solid;
 }
 </style>

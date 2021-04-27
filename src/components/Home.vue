@@ -1,6 +1,6 @@
 <template>
   <div class="Home">
-    <div class="userlist">
+    <div class="user-list">
       <p v-if="loginUser.length !== 0">
         {{ loginUser[0].userName }}さんようこそ!!
       </p>
@@ -16,25 +16,24 @@
     </div>
     <h1>ユーザ一覧</h1>
     <div>
-      <p class="username">ユーザ名</p>
-      <table class="usernamelist">
+      <p class="user-name">ユーザ名</p>
+      <table class="username-list">
         <tr
           v-for="(otherLogin, index) in otherLoginUser"
           :key="index"
-          class="usertr"
         >
-          <td class="tableuser">{{ otherLogin.userName }}</td>
+          <td class="table-user">{{ otherLogin.userName }}</td>
           <div>
             <td>
               <button
-                class="walletButton"
+                class="wallet-button"
                 @click="openModal(index), getCollections()"
               >
                 walletを見る
               </button>
             </td>
             <td>
-              <button class="walletButton" @click="openSendModal(index)">
+              <button class="wallet-button" @click="openSendModal(index)">
                 送る
               </button>
             </td>
@@ -89,11 +88,8 @@ export default {
     async getCollections() {
       await this.$store.dispatch('getCollections');
     },
-    async getcollection() {
-      await this.$store.dispatch('getcollection');
-    },
-    async dataUpdate() {
-      await this.$store.dispatch('dataUpdate');
+    async updateUser() {
+      await this.$store.dispatch('updateUser');
     },
     submitButton(index) {
       this.$store.dispatch('submitButton', index);
@@ -102,14 +98,14 @@ export default {
   },
   created: async function() {
     await this.getCollections();
-    await this.dataUpdate();
+    await this.updateUser();
     await this.updateUsername(this.userName);
   },
 };
 </script>
 
 <style>
-.userlist {
+.user-list {
   display: flex;
   width: 100%;
   margin: auto;
@@ -126,20 +122,20 @@ export default {
   background-color: white;
   height: 20px;
 }
-.username {
+.user-name {
   text-align: left;
   margin-left: 150px;
 }
-.usernamelist {
+.username-list {
   text-align: left;
   margin-left: 160px;
 }
-.walletButton {
+.wallet-button {
   color: white;
   background-color: blue;
   outline: none;
 }
-.tableuser {
+.table-user {
   width: 200px;
 }
 </style>

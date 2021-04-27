@@ -175,33 +175,39 @@ export default new Vuex.Store({
     closeSendModal({ commit }) {
       commit('closeSendModal');
     },
-    async getWallet({ commit, state }, sendWallet) {
-      const postRef = await db
+    async updateWallet({ commit, state }, sendWallet) {
+      const postRef = db.collection('user').doc(state.loginUser[0].id);
+      const getLogin = db
         .collection('user')
         .doc(state.otherLoginUser[state.index].id);
-      const postDoc = await postRef.get();
-      const getLogins = await db.collection('user').doc(state.loginUser[0].id);
-      const getLogin = await getLogins.get();
-      if (getLogin.data().wallet > 0) {
-        await postRef.update({
-          wallet: postDoc.data().wallet + Number(sendWallet),
+      try {
+        const postDoc = await postRef.get();
+        const getLogins = await getLogin.get();
+        await db.runTransaction(async (transaction) => {
+          if (
+            postDoc.data().wallet > 0 &&
+            getLogins.data().wallet > 0 &&
+            sendWallet != 'null'
+          ) {
+            await transaction.update(getLogin, {
+              wallet: getLogins.data().wallet + Number(sendWallet),
+            });
+            commit('resetUser');
+            await transaction.update(postRef, {
+              wallet: postDoc.data().wallet - Number(sendWallet),
+            });
+            commit('resetUser');
+          } else if (postDoc.data().wallet <= 0) {
+            alert('残高がありません');
+          } else if (sendWallet == '') {
+            alert('送金額を入力してください');
+          }
         });
-        commit('resetUser');
+      } catch (e) {
+        console.log(e);
       }
     },
-    async sendWallet({ commit, state }, sendWallet) {
-      const postRef = await db.collection('user').doc(state.loginUser[0].id);
-      const postDoc = await postRef.get();
-      if (postDoc.data().wallet > 0) {
-        await postRef.update({
-          wallet: postDoc.data().wallet - sendWallet,
-        });
-        commit('resetUser');
-      } else if (postDoc.data().wallet <= 0) {
-        alert('残高がありません');
-      }
-    },
-    async dataUpdate({ commit, state }) {
+    async updateUser({ commit, state }) {
       await db
         .collection('user')
         .where('login', '==', 'login')
