@@ -1,11 +1,13 @@
 <template>
   <div class="overlay" v-show="showContent">
     <div class="content">
-      <p v-if="otherUsers.length !== 0">
-        {{ otherUsers[index].userName }}さんの残高
+      <p v-if="otherLoginUser.length !== 0">
+        {{ otherLoginUser[index].userName }}さんの残高
       </p>
-      <p v-if="otherUsers.length !== 0">{{ otherUsers[index].wallet }}</p>
-      <p><button class="close" @click="closeModal">close</button></p>
+      <p v-if="otherLoginUser.length !== 0">
+        {{ otherLoginUser[index].wallet }}
+      </p>
+      <p><button class="close-button" @click="closeModal">close</button></p>
     </div>
   </div>
 </template>
@@ -19,8 +21,8 @@ export default {
     index() {
       return this.$store.getters.index;
     },
-    otherUsers() {
-      return this.$store.getters.newUser;
+    otherLoginUser() {
+      return this.$store.getters.otherLoginUser;
     },
   },
   methods: {
@@ -53,7 +55,7 @@ export default {
   background: #fff;
   position: relative;
 }
-.close {
+.close-button {
   right: 5px;
   top: 5px;
 }

@@ -1,9 +1,11 @@
 <template>
   <div class="Home">
-    <div class="userlist">
-      <p>{{ userName }}さんようこそ!!</p>
+    <div class="user-list">
+      <p v-if="loginUser.length !== 0">
+        {{ loginUser[0].userName }}さんようこそ!!
+      </p>
       <div class="button">
-        <p>残高{{ wallet }}</p>
+        <p v-if="loginUser.length !== 0">残高{{ loginUser[0].wallet }}</p>
         <input
           type="button"
           value="ログアウト"
@@ -14,53 +16,63 @@
     </div>
     <h1>ユーザ一覧</h1>
     <div>
-      <p>ユーザ名</p>
+      <p class="user-name">ユーザ名</p>
       <table class="username-list">
-        <tr v-for="(newUser, index) in otherUsers" :key="index" class="usertr">
-          <td class="table-user">{{ newUser.userName }}</td>
+        <tr
+          v-for="(otherLogin, index) in otherLoginUser"
+          :key="index"
+        >
+          <td class="table-user">{{ otherLogin.userName }}</td>
           <div>
             <td>
-              <button class="wallet-button" @click="openModal(index)">
+              <button
+                class="wallet-button"
+                @click="openModal(index), getCollections()"
+              >
                 walletを見る
               </button>
             </td>
             <td>
-              <button class="wallet-button">送る</button>
+              <button class="wallet-button" @click="openSendModal(index)">
+                送る
+              </button>
             </td>
           </div>
         </tr>
       </table>
     </div>
     <modal></modal>
+    <sendmodal></sendmodal>
   </div>
 </template>
 
 <script>
 import Modal from './Modal.vue';
+import Sendmodal from './Sendmodal.vue';
+
 export default {
   data() {
     return {
       showContent: false,
       index: 0,
+      showSendContent: false,
     };
   },
   components: {
     Modal,
+    Sendmodal,
   },
   computed: {
-    userName() {
-      return this.$store.getters.userName;
+    otherLoginUser() {
+      return this.$store.getters.otherLoginUser;
     },
-    wallet() {
-      return this.$store.getters.wallet;
-    },
-    otherUsers() {
-      return this.$store.getters.newUser;
+    loginUser() {
+      return this.$store.getters.loginUser;
     },
   },
   methods: {
-    updateUser() {
-      this.$store.dispatch('updateUser');
+    updateUsername() {
+      this.$store.dispatch('updateUsername');
     },
     signOut() {
       this.$store.dispatch('signOut');
@@ -69,26 +81,34 @@ export default {
       this.$store.dispatch('openModal', index);
       this.index = index;
     },
-    getCollections() {
-      this.$store.dispatch('getCollections');
+    openSendModal(index) {
+      this.$store.dispatch('openSendModal', index);
+      this.index = index;
     },
-    userUpdate() {
-      this.$store.dispatch('userUpdate');
+    async getCollections() {
+      await this.$store.dispatch('getCollections');
+    },
+    async updateUser() {
+      await this.$store.dispatch('updateUser');
+    },
+    submitButton(index) {
+      this.$store.dispatch('submitButton', index);
+      this.index = index;
     },
   },
   created: async function() {
     await this.getCollections();
-    await this.updateUser(this.userName);
+    await this.updateUser();
+    await this.updateUsername(this.userName);
   },
 };
 </script>
 
-<style scoped>
-.userlist {
+<style>
+.user-list {
   display: flex;
   width: 100%;
   margin: auto;
-  justify-content: center;
   align-items: center;
   justify-content: space-around;
 }
@@ -97,11 +117,12 @@ export default {
 }
 .logout {
   margin-top: 20px;
+  margin-left: 10px;
   outline: none;
   background-color: white;
   height: 20px;
 }
-.username {
+.user-name {
   text-align: left;
   margin-left: 150px;
 }

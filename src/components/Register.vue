@@ -3,7 +3,7 @@
     <div>
       <h1>新規登録画面</h1>
     </div>
-    <form @submit.prevent="signUp(), dbCollection()">
+    <form @submit.prevent="signUp(), dbRegistration()">
       <div>
         <label>ユーザ名</label>
         <input
@@ -51,8 +51,8 @@ export default {
     signUp() {
       this.$store.dispatch('registerUser', this.userInfo);
     },
-    dbCollection() {
-      this.$store.dispatch('dbCollection', this.userInfo);
+    dbRegistration() {
+      this.$store.dispatch('dbRegistration', this.userInfo);
     },
   },
 };
